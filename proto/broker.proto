@@ -1,12 +1,14 @@
 syntax = "proto3";
 
-option go_package = "generated";
+option go_package = "generated/proto";
 
 package broker;
 
 service Broker {
   rpc Publish(PublishRequest) returns (PublishResponse);
   rpc Subscribe(SubscribeRequest) returns (stream Message);
+  rpc DeclareExchange(DeclareExchangeRequest) returns (DeclareExchangeResponse);
+  rpc DeclareQueue(DeclareQueueRequest) returns (DeclareQueueResponse);
 }
 
 message PublishRequest {
@@ -25,4 +27,33 @@ message SubscribeRequest {
 
 message Message {
   string payload = 1;
+}
+
+message DeclareExchangeRequest {
+  string exchange = 1;
+  ExchangeType type = 2;
+}
+
+enum ExchangeType {
+  DIRECT = 0;
+  FANOUT = 1;
+  TOPIC = 2;
+}
+
+message DeclareExchangeResponse {
+  bool success = 1;
+}
+
+message DeclareQueueRequest {
+  string queue = 1;
+  QueueType type = 2;
+}
+
+enum QueueType {
+  NORMAL = 0;
+  DURABLE = 1;
+}
+
+message DeclareQueueResponse {
+  bool success = 1;
 }

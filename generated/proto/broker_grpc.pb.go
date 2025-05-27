@@ -4,7 +4,7 @@
 // - protoc             v5.29.3
 // source: proto/broker.proto
 
-package generated
+package proto
 
 import (
 	context "context"
@@ -19,8 +19,10 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Broker_Publish_FullMethodName   = "/broker.Broker/Publish"
-	Broker_Subscribe_FullMethodName = "/broker.Broker/Subscribe"
+	Broker_Publish_FullMethodName         = "/broker.Broker/Publish"
+	Broker_Subscribe_FullMethodName       = "/broker.Broker/Subscribe"
+	Broker_DeclareExchange_FullMethodName = "/broker.Broker/DeclareExchange"
+	Broker_DeclareQueue_FullMethodName    = "/broker.Broker/DeclareQueue"
 )
 
 // BrokerClient is the client API for Broker service.
@@ -29,6 +31,8 @@ const (
 type BrokerClient interface {
 	Publish(ctx context.Context, in *PublishRequest, opts ...grpc.CallOption) (*PublishResponse, error)
 	Subscribe(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[Message], error)
+	DeclareExchange(ctx context.Context, in *DeclareExchangeRequest, opts ...grpc.CallOption) (*DeclareExchangeResponse, error)
+	DeclareQueue(ctx context.Context, in *DeclareQueueRequest, opts ...grpc.CallOption) (*DeclareQueueResponse, error)
 }
 
 type brokerClient struct {
@@ -68,12 +72,34 @@ func (c *brokerClient) Subscribe(ctx context.Context, in *SubscribeRequest, opts
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type Broker_SubscribeClient = grpc.ServerStreamingClient[Message]
 
+func (c *brokerClient) DeclareExchange(ctx context.Context, in *DeclareExchangeRequest, opts ...grpc.CallOption) (*DeclareExchangeResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeclareExchangeResponse)
+	err := c.cc.Invoke(ctx, Broker_DeclareExchange_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *brokerClient) DeclareQueue(ctx context.Context, in *DeclareQueueRequest, opts ...grpc.CallOption) (*DeclareQueueResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeclareQueueResponse)
+	err := c.cc.Invoke(ctx, Broker_DeclareQueue_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BrokerServer is the server API for Broker service.
 // All implementations must embed UnimplementedBrokerServer
 // for forward compatibility.
 type BrokerServer interface {
 	Publish(context.Context, *PublishRequest) (*PublishResponse, error)
 	Subscribe(*SubscribeRequest, grpc.ServerStreamingServer[Message]) error
+	DeclareExchange(context.Context, *DeclareExchangeRequest) (*DeclareExchangeResponse, error)
+	DeclareQueue(context.Context, *DeclareQueueRequest) (*DeclareQueueResponse, error)
 	mustEmbedUnimplementedBrokerServer()
 }
 
@@ -89,6 +115,12 @@ func (UnimplementedBrokerServer) Publish(context.Context, *PublishRequest) (*Pub
 }
 func (UnimplementedBrokerServer) Subscribe(*SubscribeRequest, grpc.ServerStreamingServer[Message]) error {
 	return status.Errorf(codes.Unimplemented, "method Subscribe not implemented")
+}
+func (UnimplementedBrokerServer) DeclareExchange(context.Context, *DeclareExchangeRequest) (*DeclareExchangeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeclareExchange not implemented")
+}
+func (UnimplementedBrokerServer) DeclareQueue(context.Context, *DeclareQueueRequest) (*DeclareQueueResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeclareQueue not implemented")
 }
 func (UnimplementedBrokerServer) mustEmbedUnimplementedBrokerServer() {}
 func (UnimplementedBrokerServer) testEmbeddedByValue()                {}
@@ -140,6 +172,42 @@ func _Broker_Subscribe_Handler(srv interface{}, stream grpc.ServerStream) error 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type Broker_SubscribeServer = grpc.ServerStreamingServer[Message]
 
+func _Broker_DeclareExchange_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeclareExchangeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BrokerServer).DeclareExchange(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Broker_DeclareExchange_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BrokerServer).DeclareExchange(ctx, req.(*DeclareExchangeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Broker_DeclareQueue_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeclareQueueRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BrokerServer).DeclareQueue(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Broker_DeclareQueue_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BrokerServer).DeclareQueue(ctx, req.(*DeclareQueueRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Broker_ServiceDesc is the grpc.ServiceDesc for Broker service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -150,6 +218,14 @@ var Broker_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Publish",
 			Handler:    _Broker_Publish_Handler,
+		},
+		{
+			MethodName: "DeclareExchange",
+			Handler:    _Broker_DeclareExchange_Handler,
+		},
+		{
+			MethodName: "DeclareQueue",
+			Handler:    _Broker_DeclareQueue_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
