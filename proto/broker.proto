@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+option go_package = "alpaca-relay/proto";
+
+package broker;
+
+service Broker {
+  rpc Publish(PublishRequest) returns (PublishResponse);
+  rpc Subscribe(SubscribeRequest) returns (stream Message);
+}
+
+message PublishRequest {
+  string exchange = 1;
+  string routing_key = 2;
+  string payload = 3;
+}
+
+message PublishResponse {
+  bool success = 1;
+}
+
+message SubscribeRequest {
+  string queue = 1;
+}
+
+message Message {
+  string payload = 1;
+}
