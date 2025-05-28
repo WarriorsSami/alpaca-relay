@@ -22,7 +22,8 @@ message PublishResponse {
 }
 
 message SubscribeRequest {
-  string queue = 1;
+  string exchange = 1;
+  string queue = 2;
 }
 
 message Message {
@@ -46,7 +47,8 @@ message DeclareExchangeResponse {
 
 message DeclareQueueRequest {
   string queue = 1;
-  QueueType type = 2;
+  string exchange = 2;
+  QueueType type = 3;
 }
 
 enum QueueType {

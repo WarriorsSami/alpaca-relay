@@ -1,21 +1,52 @@
 package main
 
 import (
-	"fmt"
+	"alpaca-relay/generated/proto"
+	"context"
+	"google.golang.org/grpc/credentials/insecure"
+	"log"
+
+	"google.golang.org/grpc"
 )
 
-//TIP <p>To run your code, right-click the code and select <b>Run</b>.</p> <p>Alternatively, click
-// the <icon src="AllIcons.Actions.Execute"/> icon in the gutter and select the <b>Run</b> menu item from here.</p>
-
 func main() {
-	//TIP <p>Press <shortcut actionId="ShowIntentionActions"/> when your caret is at the underlined text
-	// to see how GoLand suggests fixing the warning.</p><p>Alternatively, if available, click the lightbulb to view possible fixes.</p>
-	s := "gopher"
-	fmt.Printf("Hello and welcome, %s!\n", s)
+	conn, err := grpc.NewClient("localhost:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Fatalf("did not connect: %v", err)
+	}
+	defer conn.Close()
 
-	for i := 1; i <= 5; i++ {
-		//TIP <p>To start your debugging session, right-click your code in the editor and select the Debug option.</p> <p>We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-		// for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.</p>
-		fmt.Println("i =", 100/i)
+	client := proto.NewBrokerClient(conn)
+
+	// Declare an exchange and a queue
+	_, err = client.DeclareExchange(context.Background(), &proto.DeclareExchangeRequest{
+		Exchange: "images",
+		Type:     proto.ExchangeType_TOPIC,
+	})
+
+	if err != nil {
+		log.Fatalf("could not declare exchange: %v", err)
+	}
+
+	_, err = client.DeclareQueue(context.Background(), &proto.DeclareQueueRequest{
+		Queue:    "cropper",
+		Exchange: "images",
+		Type:     proto.QueueType_NORMAL,
+	})
+
+	stream, err := client.Subscribe(context.Background(), &proto.SubscribeRequest{
+		Exchange: "images",
+		Queue:    "cropper",
+	})
+	if err != nil {
+		log.Fatalf("could not subscribe: %v", err)
+	}
+
+	for {
+		msg, err := stream.Recv()
+		if err != nil {
+			log.Fatalf("error receiving message: %v", err)
+		}
+		log.Printf("Received message: %s", msg.Payload)
 	}
 }

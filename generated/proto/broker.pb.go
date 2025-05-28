@@ -222,7 +222,8 @@ func (x *PublishResponse) GetSuccess() bool {
 
 type SubscribeRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Queue         string                 `protobuf:"bytes,1,opt,name=queue,proto3" json:"queue,omitempty"`
+	Exchange      string                 `protobuf:"bytes,1,opt,name=exchange,proto3" json:"exchange,omitempty"`
+	Queue         string                 `protobuf:"bytes,2,opt,name=queue,proto3" json:"queue,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -255,6 +256,13 @@ func (x *SubscribeRequest) ProtoReflect() protoreflect.Message {
 // Deprecated: Use SubscribeRequest.ProtoReflect.Descriptor instead.
 func (*SubscribeRequest) Descriptor() ([]byte, []int) {
 	return file_proto_broker_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *SubscribeRequest) GetExchange() string {
+	if x != nil {
+		return x.Exchange
+	}
+	return ""
 }
 
 func (x *SubscribeRequest) GetQueue() string {
@@ -407,7 +415,8 @@ func (x *DeclareExchangeResponse) GetSuccess() bool {
 type DeclareQueueRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Queue         string                 `protobuf:"bytes,1,opt,name=queue,proto3" json:"queue,omitempty"`
-	Type          QueueType              `protobuf:"varint,2,opt,name=type,proto3,enum=broker.QueueType" json:"type,omitempty"`
+	Exchange      string                 `protobuf:"bytes,2,opt,name=exchange,proto3" json:"exchange,omitempty"`
+	Type          QueueType              `protobuf:"varint,3,opt,name=type,proto3,enum=broker.QueueType" json:"type,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -445,6 +454,13 @@ func (*DeclareQueueRequest) Descriptor() ([]byte, []int) {
 func (x *DeclareQueueRequest) GetQueue() string {
 	if x != nil {
 		return x.Queue
+	}
+	return ""
+}
+
+func (x *DeclareQueueRequest) GetExchange() string {
+	if x != nil {
+		return x.Exchange
 	}
 	return ""
 }
@@ -511,19 +527,21 @@ const file_proto_broker_proto_rawDesc = "" +
 	"routingKey\x12\x18\n" +
 	"\apayload\x18\x03 \x01(\tR\apayload\"+\n" +
 	"\x0fPublishResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess\"(\n" +
-	"\x10SubscribeRequest\x12\x14\n" +
-	"\x05queue\x18\x01 \x01(\tR\x05queue\"#\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"D\n" +
+	"\x10SubscribeRequest\x12\x1a\n" +
+	"\bexchange\x18\x01 \x01(\tR\bexchange\x12\x14\n" +
+	"\x05queue\x18\x02 \x01(\tR\x05queue\"#\n" +
 	"\aMessage\x12\x18\n" +
 	"\apayload\x18\x01 \x01(\tR\apayload\"^\n" +
 	"\x16DeclareExchangeRequest\x12\x1a\n" +
 	"\bexchange\x18\x01 \x01(\tR\bexchange\x12(\n" +
 	"\x04type\x18\x02 \x01(\x0e2\x14.broker.ExchangeTypeR\x04type\"3\n" +
 	"\x17DeclareExchangeResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess\"R\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"n\n" +
 	"\x13DeclareQueueRequest\x12\x14\n" +
-	"\x05queue\x18\x01 \x01(\tR\x05queue\x12%\n" +
-	"\x04type\x18\x02 \x01(\x0e2\x11.broker.QueueTypeR\x04type\"0\n" +
+	"\x05queue\x18\x01 \x01(\tR\x05queue\x12\x1a\n" +
+	"\bexchange\x18\x02 \x01(\tR\bexchange\x12%\n" +
+	"\x04type\x18\x03 \x01(\x0e2\x11.broker.QueueTypeR\x04type\"0\n" +
 	"\x14DeclareQueueResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess*1\n" +
 	"\fExchangeType\x12\n" +

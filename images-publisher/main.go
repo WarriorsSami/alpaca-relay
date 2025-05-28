@@ -20,10 +20,16 @@ func main() {
 
 	client := proto.NewBrokerClient(conn)
 
+	// Declare an exchange
+	_, err = client.DeclareExchange(context.Background(), &proto.DeclareExchangeRequest{
+		Exchange: "images",
+		Type:     proto.ExchangeType_TOPIC,
+	})
+
 	for i := 0; i < 10; i++ {
 		msg := &proto.PublishRequest{
-			Exchange:   "default",
-			RoutingKey: "queue1",
+			Exchange:   "images",
+			RoutingKey: "images.*",
 			Payload:    "Message " + strconv.Itoa(i),
 		}
 		_, err := client.Publish(context.Background(), msg)

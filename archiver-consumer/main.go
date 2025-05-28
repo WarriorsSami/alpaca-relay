@@ -18,7 +18,26 @@ func main() {
 
 	client := proto.NewBrokerClient(conn)
 
-	stream, err := client.Subscribe(context.Background(), &proto.SubscribeRequest{Queue: "queue1"})
+	// Declare an exchange and a queue
+	_, err = client.DeclareExchange(context.Background(), &proto.DeclareExchangeRequest{
+		Exchange: "images",
+		Type:     proto.ExchangeType_TOPIC,
+	})
+
+	if err != nil {
+		log.Fatalf("could not declare exchange: %v", err)
+	}
+
+	_, err = client.DeclareQueue(context.Background(), &proto.DeclareQueueRequest{
+		Queue:    "images.archive",
+		Exchange: "images",
+		Type:     proto.QueueType_NORMAL,
+	})
+
+	stream, err := client.Subscribe(context.Background(), &proto.SubscribeRequest{
+		Exchange: "images",
+		Queue:    "images.archive",
+	})
 	if err != nil {
 		log.Fatalf("could not subscribe: %v", err)
 	}
