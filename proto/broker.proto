@@ -9,6 +9,8 @@ service Broker {
   rpc Subscribe(SubscribeRequest) returns (stream Message);
   rpc DeclareExchange(DeclareExchangeRequest) returns (DeclareExchangeResponse);
   rpc DeclareQueue(DeclareQueueRequest) returns (DeclareQueueResponse);
+  rpc AckMessage(AckMessageRequest) returns (AckMessageResponse);
+  rpc NackMessage(NackMessageRequest) returns (NackMessageResponse);
 }
 
 message PublishRequest {
@@ -27,7 +29,8 @@ message SubscribeRequest {
 }
 
 message Message {
-  string payload = 1;
+  string id = 1;
+  string payload = 2;
 }
 
 message DeclareExchangeRequest {
@@ -57,5 +60,26 @@ enum QueueType {
 }
 
 message DeclareQueueResponse {
+  bool success = 1;
+}
+
+message AckMessageRequest {
+  string message_id = 1;
+  string queue = 2;
+  string exchange = 3;
+}
+
+message AckMessageResponse {
+  bool success = 1;
+}
+
+message NackMessageRequest {
+  string message_id = 1;
+  string queue = 2;
+  string exchange = 3;
+  bool requeue = 4; // If true, the message will be re-queued
+}
+
+message NackMessageResponse {
   bool success = 1;
 }

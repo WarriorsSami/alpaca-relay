@@ -23,6 +23,8 @@ const (
 	Broker_Subscribe_FullMethodName       = "/broker.Broker/Subscribe"
 	Broker_DeclareExchange_FullMethodName = "/broker.Broker/DeclareExchange"
 	Broker_DeclareQueue_FullMethodName    = "/broker.Broker/DeclareQueue"
+	Broker_AckMessage_FullMethodName      = "/broker.Broker/AckMessage"
+	Broker_NackMessage_FullMethodName     = "/broker.Broker/NackMessage"
 )
 
 // BrokerClient is the client API for Broker service.
@@ -33,6 +35,8 @@ type BrokerClient interface {
 	Subscribe(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[Message], error)
 	DeclareExchange(ctx context.Context, in *DeclareExchangeRequest, opts ...grpc.CallOption) (*DeclareExchangeResponse, error)
 	DeclareQueue(ctx context.Context, in *DeclareQueueRequest, opts ...grpc.CallOption) (*DeclareQueueResponse, error)
+	AckMessage(ctx context.Context, in *AckMessageRequest, opts ...grpc.CallOption) (*AckMessageResponse, error)
+	NackMessage(ctx context.Context, in *NackMessageRequest, opts ...grpc.CallOption) (*NackMessageResponse, error)
 }
 
 type brokerClient struct {
@@ -92,6 +96,26 @@ func (c *brokerClient) DeclareQueue(ctx context.Context, in *DeclareQueueRequest
 	return out, nil
 }
 
+func (c *brokerClient) AckMessage(ctx context.Context, in *AckMessageRequest, opts ...grpc.CallOption) (*AckMessageResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AckMessageResponse)
+	err := c.cc.Invoke(ctx, Broker_AckMessage_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *brokerClient) NackMessage(ctx context.Context, in *NackMessageRequest, opts ...grpc.CallOption) (*NackMessageResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(NackMessageResponse)
+	err := c.cc.Invoke(ctx, Broker_NackMessage_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BrokerServer is the server API for Broker service.
 // All implementations must embed UnimplementedBrokerServer
 // for forward compatibility.
@@ -100,6 +124,8 @@ type BrokerServer interface {
 	Subscribe(*SubscribeRequest, grpc.ServerStreamingServer[Message]) error
 	DeclareExchange(context.Context, *DeclareExchangeRequest) (*DeclareExchangeResponse, error)
 	DeclareQueue(context.Context, *DeclareQueueRequest) (*DeclareQueueResponse, error)
+	AckMessage(context.Context, *AckMessageRequest) (*AckMessageResponse, error)
+	NackMessage(context.Context, *NackMessageRequest) (*NackMessageResponse, error)
 	mustEmbedUnimplementedBrokerServer()
 }
 
@@ -121,6 +147,12 @@ func (UnimplementedBrokerServer) DeclareExchange(context.Context, *DeclareExchan
 }
 func (UnimplementedBrokerServer) DeclareQueue(context.Context, *DeclareQueueRequest) (*DeclareQueueResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeclareQueue not implemented")
+}
+func (UnimplementedBrokerServer) AckMessage(context.Context, *AckMessageRequest) (*AckMessageResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AckMessage not implemented")
+}
+func (UnimplementedBrokerServer) NackMessage(context.Context, *NackMessageRequest) (*NackMessageResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method NackMessage not implemented")
 }
 func (UnimplementedBrokerServer) mustEmbedUnimplementedBrokerServer() {}
 func (UnimplementedBrokerServer) testEmbeddedByValue()                {}
@@ -208,6 +240,42 @@ func _Broker_DeclareQueue_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Broker_AckMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AckMessageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BrokerServer).AckMessage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Broker_AckMessage_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BrokerServer).AckMessage(ctx, req.(*AckMessageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Broker_NackMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(NackMessageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BrokerServer).NackMessage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Broker_NackMessage_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BrokerServer).NackMessage(ctx, req.(*NackMessageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Broker_ServiceDesc is the grpc.ServiceDesc for Broker service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -226,6 +294,14 @@ var Broker_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeclareQueue",
 			Handler:    _Broker_DeclareQueue_Handler,
+		},
+		{
+			MethodName: "AckMessage",
+			Handler:    _Broker_AckMessage_Handler,
+		},
+		{
+			MethodName: "NackMessage",
+			Handler:    _Broker_NackMessage_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

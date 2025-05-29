@@ -11,8 +11,14 @@ import (
 	"google.golang.org/grpc"
 )
 
+const (
+	exchangeName      = "images"
+	routingKey        = "images.*"
+	connectionAddress = "localhost:50051"
+)
+
 func main() {
-	conn, err := grpc.NewClient("localhost:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.NewClient(connectionAddress, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
@@ -22,14 +28,14 @@ func main() {
 
 	// Declare an exchange
 	_, err = client.DeclareExchange(context.Background(), &proto.DeclareExchangeRequest{
-		Exchange: "images",
+		Exchange: exchangeName,
 		Type:     proto.ExchangeType_TOPIC,
 	})
 
 	for i := 0; i < 10; i++ {
 		msg := &proto.PublishRequest{
-			Exchange:   "images",
-			RoutingKey: "images.*",
+			Exchange:   exchangeName,
+			RoutingKey: routingKey,
 			Payload:    "Message " + strconv.Itoa(i),
 		}
 		_, err := client.Publish(context.Background(), msg)

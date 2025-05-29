@@ -274,7 +274,8 @@ func (x *SubscribeRequest) GetQueue() string {
 
 type Message struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Payload       string                 `protobuf:"bytes,1,opt,name=payload,proto3" json:"payload,omitempty"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Payload       string                 `protobuf:"bytes,2,opt,name=payload,proto3" json:"payload,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -307,6 +308,13 @@ func (x *Message) ProtoReflect() protoreflect.Message {
 // Deprecated: Use Message.ProtoReflect.Descriptor instead.
 func (*Message) Descriptor() ([]byte, []int) {
 	return file_proto_broker_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *Message) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
 }
 
 func (x *Message) GetPayload() string {
@@ -516,6 +524,222 @@ func (x *DeclareQueueResponse) GetSuccess() bool {
 	return false
 }
 
+type AckMessageRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	MessageId     string                 `protobuf:"bytes,1,opt,name=message_id,json=messageId,proto3" json:"message_id,omitempty"`
+	Queue         string                 `protobuf:"bytes,2,opt,name=queue,proto3" json:"queue,omitempty"`
+	Exchange      string                 `protobuf:"bytes,3,opt,name=exchange,proto3" json:"exchange,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AckMessageRequest) Reset() {
+	*x = AckMessageRequest{}
+	mi := &file_proto_broker_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AckMessageRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AckMessageRequest) ProtoMessage() {}
+
+func (x *AckMessageRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_broker_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AckMessageRequest.ProtoReflect.Descriptor instead.
+func (*AckMessageRequest) Descriptor() ([]byte, []int) {
+	return file_proto_broker_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *AckMessageRequest) GetMessageId() string {
+	if x != nil {
+		return x.MessageId
+	}
+	return ""
+}
+
+func (x *AckMessageRequest) GetQueue() string {
+	if x != nil {
+		return x.Queue
+	}
+	return ""
+}
+
+func (x *AckMessageRequest) GetExchange() string {
+	if x != nil {
+		return x.Exchange
+	}
+	return ""
+}
+
+type AckMessageResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AckMessageResponse) Reset() {
+	*x = AckMessageResponse{}
+	mi := &file_proto_broker_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AckMessageResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AckMessageResponse) ProtoMessage() {}
+
+func (x *AckMessageResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_broker_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AckMessageResponse.ProtoReflect.Descriptor instead.
+func (*AckMessageResponse) Descriptor() ([]byte, []int) {
+	return file_proto_broker_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *AckMessageResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+type NackMessageRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	MessageId     string                 `protobuf:"bytes,1,opt,name=message_id,json=messageId,proto3" json:"message_id,omitempty"`
+	Queue         string                 `protobuf:"bytes,2,opt,name=queue,proto3" json:"queue,omitempty"`
+	Exchange      string                 `protobuf:"bytes,3,opt,name=exchange,proto3" json:"exchange,omitempty"`
+	Requeue       bool                   `protobuf:"varint,4,opt,name=requeue,proto3" json:"requeue,omitempty"` // If true, the message will be re-queued
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *NackMessageRequest) Reset() {
+	*x = NackMessageRequest{}
+	mi := &file_proto_broker_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *NackMessageRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*NackMessageRequest) ProtoMessage() {}
+
+func (x *NackMessageRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_broker_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use NackMessageRequest.ProtoReflect.Descriptor instead.
+func (*NackMessageRequest) Descriptor() ([]byte, []int) {
+	return file_proto_broker_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *NackMessageRequest) GetMessageId() string {
+	if x != nil {
+		return x.MessageId
+	}
+	return ""
+}
+
+func (x *NackMessageRequest) GetQueue() string {
+	if x != nil {
+		return x.Queue
+	}
+	return ""
+}
+
+func (x *NackMessageRequest) GetExchange() string {
+	if x != nil {
+		return x.Exchange
+	}
+	return ""
+}
+
+func (x *NackMessageRequest) GetRequeue() bool {
+	if x != nil {
+		return x.Requeue
+	}
+	return false
+}
+
+type NackMessageResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *NackMessageResponse) Reset() {
+	*x = NackMessageResponse{}
+	mi := &file_proto_broker_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *NackMessageResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*NackMessageResponse) ProtoMessage() {}
+
+func (x *NackMessageResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_broker_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use NackMessageResponse.ProtoReflect.Descriptor instead.
+func (*NackMessageResponse) Descriptor() ([]byte, []int) {
+	return file_proto_broker_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *NackMessageResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
 var File_proto_broker_proto protoreflect.FileDescriptor
 
 const file_proto_broker_proto_rawDesc = "" +
@@ -530,9 +754,10 @@ const file_proto_broker_proto_rawDesc = "" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\"D\n" +
 	"\x10SubscribeRequest\x12\x1a\n" +
 	"\bexchange\x18\x01 \x01(\tR\bexchange\x12\x14\n" +
-	"\x05queue\x18\x02 \x01(\tR\x05queue\"#\n" +
-	"\aMessage\x12\x18\n" +
-	"\apayload\x18\x01 \x01(\tR\apayload\"^\n" +
+	"\x05queue\x18\x02 \x01(\tR\x05queue\"3\n" +
+	"\aMessage\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x18\n" +
+	"\apayload\x18\x02 \x01(\tR\apayload\"^\n" +
 	"\x16DeclareExchangeRequest\x12\x1a\n" +
 	"\bexchange\x18\x01 \x01(\tR\bexchange\x12(\n" +
 	"\x04type\x18\x02 \x01(\x0e2\x14.broker.ExchangeTypeR\x04type\"3\n" +
@@ -543,6 +768,21 @@ const file_proto_broker_proto_rawDesc = "" +
 	"\bexchange\x18\x02 \x01(\tR\bexchange\x12%\n" +
 	"\x04type\x18\x03 \x01(\x0e2\x11.broker.QueueTypeR\x04type\"0\n" +
 	"\x14DeclareQueueResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"d\n" +
+	"\x11AckMessageRequest\x12\x1d\n" +
+	"\n" +
+	"message_id\x18\x01 \x01(\tR\tmessageId\x12\x14\n" +
+	"\x05queue\x18\x02 \x01(\tR\x05queue\x12\x1a\n" +
+	"\bexchange\x18\x03 \x01(\tR\bexchange\".\n" +
+	"\x12AckMessageResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"\x7f\n" +
+	"\x12NackMessageRequest\x12\x1d\n" +
+	"\n" +
+	"message_id\x18\x01 \x01(\tR\tmessageId\x12\x14\n" +
+	"\x05queue\x18\x02 \x01(\tR\x05queue\x12\x1a\n" +
+	"\bexchange\x18\x03 \x01(\tR\bexchange\x12\x18\n" +
+	"\arequeue\x18\x04 \x01(\bR\arequeue\"/\n" +
+	"\x13NackMessageResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess*1\n" +
 	"\fExchangeType\x12\n" +
 	"\n" +
@@ -553,12 +793,15 @@ const file_proto_broker_proto_rawDesc = "" +
 	"\tQueueType\x12\n" +
 	"\n" +
 	"\x06NORMAL\x10\x00\x12\v\n" +
-	"\aDURABLE\x10\x012\x9d\x02\n" +
+	"\aDURABLE\x10\x012\xaa\x03\n" +
 	"\x06Broker\x12:\n" +
 	"\aPublish\x12\x16.broker.PublishRequest\x1a\x17.broker.PublishResponse\x128\n" +
 	"\tSubscribe\x12\x18.broker.SubscribeRequest\x1a\x0f.broker.Message0\x01\x12R\n" +
 	"\x0fDeclareExchange\x12\x1e.broker.DeclareExchangeRequest\x1a\x1f.broker.DeclareExchangeResponse\x12I\n" +
-	"\fDeclareQueue\x12\x1b.broker.DeclareQueueRequest\x1a\x1c.broker.DeclareQueueResponseB\x11Z\x0fgenerated/protob\x06proto3"
+	"\fDeclareQueue\x12\x1b.broker.DeclareQueueRequest\x1a\x1c.broker.DeclareQueueResponse\x12C\n" +
+	"\n" +
+	"AckMessage\x12\x19.broker.AckMessageRequest\x1a\x1a.broker.AckMessageResponse\x12F\n" +
+	"\vNackMessage\x12\x1a.broker.NackMessageRequest\x1a\x1b.broker.NackMessageResponseB\x11Z\x0fgenerated/protob\x06proto3"
 
 var (
 	file_proto_broker_proto_rawDescOnce sync.Once
@@ -573,7 +816,7 @@ func file_proto_broker_proto_rawDescGZIP() []byte {
 }
 
 var file_proto_broker_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_proto_broker_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_proto_broker_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_proto_broker_proto_goTypes = []any{
 	(ExchangeType)(0),               // 0: broker.ExchangeType
 	(QueueType)(0),                  // 1: broker.QueueType
@@ -585,23 +828,31 @@ var file_proto_broker_proto_goTypes = []any{
 	(*DeclareExchangeResponse)(nil), // 7: broker.DeclareExchangeResponse
 	(*DeclareQueueRequest)(nil),     // 8: broker.DeclareQueueRequest
 	(*DeclareQueueResponse)(nil),    // 9: broker.DeclareQueueResponse
+	(*AckMessageRequest)(nil),       // 10: broker.AckMessageRequest
+	(*AckMessageResponse)(nil),      // 11: broker.AckMessageResponse
+	(*NackMessageRequest)(nil),      // 12: broker.NackMessageRequest
+	(*NackMessageResponse)(nil),     // 13: broker.NackMessageResponse
 }
 var file_proto_broker_proto_depIdxs = []int32{
-	0, // 0: broker.DeclareExchangeRequest.type:type_name -> broker.ExchangeType
-	1, // 1: broker.DeclareQueueRequest.type:type_name -> broker.QueueType
-	2, // 2: broker.Broker.Publish:input_type -> broker.PublishRequest
-	4, // 3: broker.Broker.Subscribe:input_type -> broker.SubscribeRequest
-	6, // 4: broker.Broker.DeclareExchange:input_type -> broker.DeclareExchangeRequest
-	8, // 5: broker.Broker.DeclareQueue:input_type -> broker.DeclareQueueRequest
-	3, // 6: broker.Broker.Publish:output_type -> broker.PublishResponse
-	5, // 7: broker.Broker.Subscribe:output_type -> broker.Message
-	7, // 8: broker.Broker.DeclareExchange:output_type -> broker.DeclareExchangeResponse
-	9, // 9: broker.Broker.DeclareQueue:output_type -> broker.DeclareQueueResponse
-	6, // [6:10] is the sub-list for method output_type
-	2, // [2:6] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	0,  // 0: broker.DeclareExchangeRequest.type:type_name -> broker.ExchangeType
+	1,  // 1: broker.DeclareQueueRequest.type:type_name -> broker.QueueType
+	2,  // 2: broker.Broker.Publish:input_type -> broker.PublishRequest
+	4,  // 3: broker.Broker.Subscribe:input_type -> broker.SubscribeRequest
+	6,  // 4: broker.Broker.DeclareExchange:input_type -> broker.DeclareExchangeRequest
+	8,  // 5: broker.Broker.DeclareQueue:input_type -> broker.DeclareQueueRequest
+	10, // 6: broker.Broker.AckMessage:input_type -> broker.AckMessageRequest
+	12, // 7: broker.Broker.NackMessage:input_type -> broker.NackMessageRequest
+	3,  // 8: broker.Broker.Publish:output_type -> broker.PublishResponse
+	5,  // 9: broker.Broker.Subscribe:output_type -> broker.Message
+	7,  // 10: broker.Broker.DeclareExchange:output_type -> broker.DeclareExchangeResponse
+	9,  // 11: broker.Broker.DeclareQueue:output_type -> broker.DeclareQueueResponse
+	11, // 12: broker.Broker.AckMessage:output_type -> broker.AckMessageResponse
+	13, // 13: broker.Broker.NackMessage:output_type -> broker.NackMessageResponse
+	8,  // [8:14] is the sub-list for method output_type
+	2,  // [2:8] is the sub-list for method input_type
+	2,  // [2:2] is the sub-list for extension type_name
+	2,  // [2:2] is the sub-list for extension extendee
+	0,  // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_proto_broker_proto_init() }
@@ -615,7 +866,7 @@ func file_proto_broker_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_broker_proto_rawDesc), len(file_proto_broker_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   8,
+			NumMessages:   12,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
